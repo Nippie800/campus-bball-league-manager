@@ -2,7 +2,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
-import { signup } from "../../services/auth";
+import { createUserProfile, signup } from "../../services/auth";
 import { schoolTheme } from "../../theme/schoolTheme";
 
 export default function Signup() {
@@ -10,19 +10,31 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleSignup = async () => {
-    if (password !== confirmPassword) {
-      alert("Passwords do not match");
-      return;
-    }
+const handleSignup = async () => {
+  if (password !== confirmPassword) {
+    alert("Passwords do not match");
+    return;
+  }
 
-    try {
-      await signup(email, password);
-      router.replace("/");
-    } catch (err: any) {
-      alert(err.message);
-    }
-  };
+  try {
+    // 1️⃣ Create Firebase Auth user
+    const userCredential = await signup(email, password);
+
+    // 2️⃣ Create Firestore user profile
+    await createUserProfile(userCredential.user.uid, {
+      name: email.split("@")[0], // temporary name
+      school: "Unknown", // can update later
+      role: "coach", // default role (can change)
+    });
+
+    // 3️⃣ Go to dashboard
+    router.replace("/");
+  } catch (err: any) {
+    alert(err.message);
+  }
+};
+
+
 
   return (
     <LinearGradient

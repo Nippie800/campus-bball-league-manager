@@ -1,18 +1,37 @@
 import {
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut
+  signInWithEmailAndPassword
 } from "firebase/auth";
-import { auth } from "../firebaseConfig";
+import { doc, setDoc } from "firebase/firestore";
+import { auth, db } from "../firebaseConfig";
 
-export const signup = (email: string, password: string) => {
+export async function signup(
+  email: string,
+  password: string
+) {
   return createUserWithEmailAndPassword(auth, email, password);
-};
+}
 
-export const login = (email: string, password: string) => {
+export async function login(
+  email: string,
+  password: string
+) {
   return signInWithEmailAndPassword(auth, email, password);
-};
+}
 
-export const logout = () => {
-  return signOut(auth);
-};
+// 👇 ADD THIS
+export async function createUserProfile(
+  uid: string,
+  data: {
+    name: string;
+    role: "admin" | "coach" | "player";
+    school: string;
+  }
+) {
+  await setDoc(doc(db, "users", uid), {
+    ...data,
+    createdAt: new Date()
+  });
+}
+
+
