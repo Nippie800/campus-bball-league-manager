@@ -5,9 +5,9 @@ import { schoolTheme } from "../theme/schoolTheme";
 const menuItems: { label: string; route: Href }[] = [
   { label: "Dashboard", route: "/" },
   { label: "Teams", route: "/(teams)" },
-  //{ label: "Fixtures", route: "/fixtures" },
+  { label: "Fixtures", route: "/(fixtures)" },
   //{ label: "Results", route: "/results" },
-  //{ label: "Standings", route: "/standings" },
+  { label: "Standings", route: "/(standings)" },
 ];
 
 export default function Sidebar() {
